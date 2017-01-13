@@ -1,0 +1,8 @@
+My own implementations of different data structures and some performance tests to compare them.
+At the moment the data structures here are:
+
+bst.h/bst.cpp -- Binary search tree
+
+And tests will be added to:
+
+performance.cpp
