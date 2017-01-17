@@ -1,15 +1,14 @@
 CC = g++
+CFLAGS = -std=c++11 -stdlib=libc++
 
 all: bst
 
-bst: bst.o
-	$(CC) $(CFLAGS) -o bst bst.o
-
-bst.o:
-	$(CC) $(CFLAGS) -c bst.cpp
+bst: clean
+	$(CC) $(CFLAGS) -o bst bst.cc
+	./bst
 
 clean:
-	rm -f *.o try bst
+	rm -f *.o bst
 
 test: clean all
 	./try
