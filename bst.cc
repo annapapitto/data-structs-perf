@@ -2,6 +2,8 @@
 #include <iostream>
 using namespace std;
 
+#define NOT_FOUND INT_MIN
+
 struct Node
 {
   int key;
@@ -106,27 +108,17 @@ int Node::get_from(int k)
     {
       return val;
     }
-  else if (key > k)
+  else if (key > k && left)
     {
-      if (left)
-        {
-          return left->get_from(k);
-        }
-      else
-        {
-          return -1; // Potentially replace with different value.
-        }
+      return left->get_from(k);
+    }
+  else if (key < k && right)
+    {
+      return right->get_from(k);
     }
   else
     {
-      if (right)
-        {
-          return right->get_from(k);
-        }
-      else
-        {
-          return -1;
-        }
+      return NOT_FOUND;
     }
 }
 
@@ -150,6 +142,9 @@ void Node::replace_myself()
   val = new_self->val;
   left = new_self->left;
   right = new_self->right;
+
+  new_self->left = nullptr;
+  new_self->right = nullptr;
   delete(new_self);
 }
 
@@ -206,16 +201,17 @@ bool Node::is_leaf()
   return not (left || right);
 }
 
-void assert(int correct, int guess)
+void assert(int guess, int correct)
 {
   if (correct != guess)
     {
-      cout << correct << "should be" << guess;
+      cout << "got" << guess << "should be" << correct << endl;
     }
 }
 
 int main()
 {
+  //Some testing of put, get, del.
   BST b;
   b.put(5, 50);
   assert(b.get(5), 50);
@@ -228,7 +224,44 @@ int main()
   b.put(10, 100);
   b.del(7);
   assert(b.get(10), 100);
-  assert(b.get(7), -1);
+  assert(b.get(7), NOT_FOUND);
 
+  b.del(10);
+  assert(b.get(10), NOT_FOUND);
+
+  b.put(1, 10);
+  b.put(4, 40);
+  b.del(5);
+  assert(b.get(5), NOT_FOUND);
+  assert(b.get(2), 20);
+
+  assert(b.get(1), 10);
+  assert(b.get(4), 40);
+
+  b.put(6, 60);
+  b.del(4);
+  assert(b.get(4), NOT_FOUND);
+  assert(b.get(6), 60);
+  assert(b.get(2), 20);
+
+  b.put(0, 0);
+  b.del(1);
+  assert(b.get(1), NOT_FOUND);
+  assert(b.get(0), 0);
+  assert(b.get(2), 20);
+
+  b.put(4, 40);
+  b.put(10, 100);
+  b.put(3, 30);
+  b.put(5, 50);
+  b.put(8, 80);
+  b.del(6);
+  assert(b.get(6), NOT_FOUND);
+  assert(b.get(10), 100);
+  assert(b.get(4), 40);
+  assert(b.get(5), 50);
+  assert(b.get(8), 80);
+
+  cout << "end" << endl;
   return 0;
 }
